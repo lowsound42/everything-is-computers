@@ -34,4 +34,4 @@ For this project I decided to try `Caddy` instead of `Nginx` like I usually do. 
 
 ### Version Control
 
-Potential move to Gitlab or Gitea for a selfhosted option.
+Potential move to Gitlab or Gitea for a selfhosted option. Maybe Codeberg.
