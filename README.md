@@ -10,7 +10,7 @@ All users are first re-directed to the authentik service to enter their credenti
 
 This is mostly in place because Affine does not allow us to gate the basic local-storage version of the instance so i have to control access myself. (Kind of annoying but a good learning experience).
 
-I have turned off authentik redirection for mobile/electron apps as this flow breaks their auth process.
+I have turned off authentik redirection for mobile/electron apps as this flow breaks their regular auth process.
 
 ## Reverse Proxy
 
