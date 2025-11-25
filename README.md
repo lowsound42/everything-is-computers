@@ -1,18 +1,22 @@
 # README
 
-This repo serves as a reference for the infrastructure being built for the `group that is still unnamed`. We are exploring self-hosted options for basic productivity apps that can be used by a team.
+This repo serves as a reference for the infrastructure being built for the `group that is still unnamed`. I am exploring self-hosted options for basic productivity apps that can be used by a team.
 
 ## Authentication
 
-[Authentik](https://goauthentik.io/) serves as our auth provider. We are using the basic email + password strategy (to borrow a term from passport.js).
+[Authentik](https://goauthentik.io/) serves as our auth provider. I am using the basic email + password strategy (to borrow a term from passport.js).
 
 All users are first re-directed to the authentik service to enter their credentials before being forwarded to their specific destination.
 
-This is mostly in place because Affine does not allow us to gate the basic local-storage version of the instance so we have to control access ourselves. (Kind of annoying but a good learning experience).
+This is mostly in place because Affine does not allow us to gate the basic local-storage version of the instance so i have to control access myself. (Kind of annoying but a good learning experience).
 
-We have turned off authentik redirection for mobile/electron apps as this flow breaks their auth process.
+I have turned off authentik redirection for mobile/electron apps as this flow breaks their auth process.
 
-## Services:
+## Reverse Proxy
+
+For this project I decided to try Caddy instead of my usual go-to `Nginx`. Actually very easy to setup and a delight to work with.
+
+## Services
 
 ### Team Chat
 
