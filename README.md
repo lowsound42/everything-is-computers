@@ -14,7 +14,7 @@ I have turned off authentik redirection for mobile/electron apps as this flow br
 
 ## Reverse Proxy
 
-For this project I decided to try Caddy instead of my usual go-to `Nginx`. Actually very easy to setup and a delight to work with.
+For this project I decided to try `Caddy` instead of my usual go-to `Nginx`. Actually very easy to setup and a delight to work with.
 
 ## Services
 
