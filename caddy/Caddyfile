@@ -4,104 +4,41 @@
 
 # https://caddyserver.com/docs/caddyfile
 
-{$AUTH_DOMAIN} {
-reverse_proxy localhost:9000
-}
-
-{$NOTES_DOMAIN} { # Use route to control directive execution order
-route { # Always forward outpost path to actual outpost
-reverse_proxy /outpost.goauthentik.io/\* http://localhost:9000
-
-    @affine_apps {
-            header User-Agent *Electron*
-            header User-Agent *AFFiNE*
-            header User-Agent *okhttp*
-            header User-Agent *iOS*
-            header User-Agent *Android*
-            header User-Agent *Mobile*
-        }
-        reverse_proxy @affine_apps http://localhost:3010 {
-            header_up Upgrade {http.request.header.Upgrade}
-            header_up Connection {http.request.header.Connection}
-        }
-
-        # Forward authentication to Authentik outpost
-        forward_auth http://localhost:9000 {
-            uri /outpost.goauthentik.io/auth/caddy
-
-            # Copy Authentik headers (capitalization is important!)
-            copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
-
-            # Trust private IP ranges (adjust to your outpost IP)
-            trusted_proxies private_ranges
-        }
-
-        # Proxy to your Affine instance
+{$NOTES_DOMAIN} {
+    route {
         reverse_proxy http://localhost:3010 {
             # WebSocket support (required for Affine sync)
             header_up Upgrade {http.request.header.Upgrade}
             header_up Connection {http.request.header.Connection}
         }
     }
-
 }
 
 {$CHAT_DOMAIN$} {
-route {
-reverse*proxy /outpost.goauthentik.io/* http://localhost:9000
-@webhooks {
-path /plugins/github/webhook
-path /hooks/\_
-}
-reverse_proxy @webhooks http://localhost:8065 {
-header_up Upgrade {http.request.header.Upgrade}
-header_up Connection {http.request.header.Connection}
-}
-
-# Skip auth for Mattermost desktop/mobile apps
-
-@mattermost*apps {
-header User-Agent \_Mattermost*
-header User-Agent _Electron_
-header User-Agent _okhttp_ # header User-Agent _iOS_ # header User-Agent _Android_ # header User-Agent _Mobile_
-}
-reverse_proxy @mattermost_apps http://localhost:8065 {
-header_up Upgrade {http.request.header.Upgrade}
-header_up Connection {http.request.header.Connection}
-}
-
-        # Apply forward auth for browsers
-        forward_auth http://localhost:9000 {
-            uri /outpost.goauthentik.io/auth/caddy
-            copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
-            trusted_proxies private_ranges
+    route {
+        @webhooks {
+            path /plugins/github/webhook
+            path /hooks/*
         }
-
+        reverse_proxy @webhooks http://localhost:8065 {
+            header_up Upgrade {http.request.header.Upgrade}
+            header_up Connection {http.request.header.Connection}
+        }        
+        
         reverse_proxy http://localhost:8065 {
             header_up Upgrade {http.request.header.Upgrade}
             header_up Connection {http.request.header.Connection}
         }
     }
-
 }
 
 {$DRIVE_DOMAIN$} {
-route {
-reverse_proxy /outpost.goauthentik.io/\* http://localhost:9000
-
-        # Apply forward auth for browsers
-        forward_auth http://localhost:9000 {
-            uri /outpost.goauthentik.io/auth/caddy
-            copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
-            trusted_proxies private_ranges
-        }
-
+   route {
         reverse_proxy http://localhost:8000 {
             header_up Upgrade {http.request.header.Upgrade}
             header_up Connection {http.request.header.Connection}
         }
     }
-
 }
 
 # As an alternative to editing the above site block, you can add your own site
